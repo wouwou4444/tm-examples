@@ -63,3 +63,4 @@ corrplot(mtd.norm, is.corr = FALSE)
 
 mtd.norm <- as.matrix(removeSparseTerms(TermDocumentMatrix(my_vcorpus_fr_5,
                                          control=list(weighting=weightTfIdf)),0.8))
+corrplot(mtd.norm, is.corr = FALSE)
