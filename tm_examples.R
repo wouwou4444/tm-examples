@@ -1,3 +1,8 @@
+install.packages("corrplot")
+install.packages("tm")
+
+library(tm)
+library(corrplot)
 test_sentences <- readLines("./sentences.txt", encoding = "UTF-8")
 
 text_sample <- c("serveur_ADBCRD01,nom1-nom2-nom3. test de differents sep, EMf:listener_ORAADB01_dg_DG01_12654",
@@ -45,9 +50,16 @@ my_vcorpus_fr_5 <- tm_map(my_vcorpus_fr_5,FUN = kill_chars, my_punct_to_keep)
 my_punct_to_keep <- "[\\.\\-\\_]+$"
 my_vcorpus_fr_5 <- tm_map(my_vcorpus_fr_5,FUN = kill_chars, my_punct_to_keep)
 
+my_vcorpus_fr_5 <- tm_map(my_vcorpus_fr_5, stripWhitespace)
+
 dtm_vcorpus_fr2 <- DocumentTermMatrix(my_vcorpus_fr_5)
 
 dtm_vcorpus_fr_matrix2 <- (as.matrix(dtm_vcorpus_fr2))
 
 # inspect(dtm_vcorpus_fr2)
 
+mtd.norm <- as.matrix(removeSparseTerms(TermDocumentMatrix(my_vcorpus_fr_5),0.8))
+corrplot(mtd.norm, is.corr = FALSE)
+
+mtd.norm <- as.matrix(removeSparseTerms(TermDocumentMatrix(my_vcorpus_fr_5,
+                                         control=list(weighting=weightTfIdf)),0.8))
