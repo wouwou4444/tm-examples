@@ -1,5 +1,6 @@
 # install.packages("corrplot")
 # install.packages("tm")
+# install.packages("readtext")
 
 library(tm)
 library(corrplot)
@@ -34,11 +35,8 @@ dtm_vcorpus_fr_matrix <- (as.matrix(dtm_vcorpus_fr))
 kill_chars <- content_transformer (function(x, pattern) gsub(pattern, " ", x))
 my_punct <- "[!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~]"
 my_punct <- "[!\"#$%&'()*+,/:;<=>?@\\[\\]^`\\{|\\}~\\]"
-my_punct <- "[],()!\"*#$+:;<=>?~@^|{}\\[]"
-# my_vcorpus_fr_4 <- tm_map(my_vcorpus_fr_3,FUN = kill_chars, "'")
-# my_vcorpus_fr_4 <- tm_map(my_vcorpus_fr_4,FUN = kill_chars, ",")
-# my_vcorpus_fr_4 <- tm_map(my_vcorpus_fr_4,FUN = kill_chars, ":")
-# my_vcorpus_fr_4 <- tm_map(my_vcorpus_fr_4,FUN = kill_chars, "(")
+my_punct <- "[],()!\"*#$+:;<=>?~@^|{}\\[/]"
+
 # 
 
 my_vcorpus_fr_5 <- tm_map(my_vcorpus_fr_3,FUN = kill_chars, my_punct)
@@ -52,23 +50,35 @@ my_punct_to_keep <- "[\\.\\-\\_]+$"
 my_vcorpus_fr_5 <- tm_map(my_vcorpus_fr_5,FUN = kill_chars, my_punct_to_keep)
 
 my_vcorpus_fr_5 <- tm_map(my_vcorpus_fr_5, stripWhitespace)
-my_vcorpus_fr_6 <- my_vcorpus_fr_5[1:4]
+my_vcorpus_fr_6 <- my_vcorpus_fr_5
 ####
 separator <- c("_",".", "-")
 i <- 2**length(separator)
+my_vcorpus_fr_7 <- VCorpus(VectorSource(character(length = length(my_vcorpus_fr_6))))
 for (j in 1:(i-1)) {
-  # print(j)
-  # print(separator[(intToBits(j) == 1)[1:3]])
   gexpr <- paste("[",paste(separator[(intToBits(j) == 1)[1:length(separator)]], collapse = ""),"]",sep = "")
   print(gexpr)
-  temp_corpus <- tm_map(my_vcorpus_fr_5,FUN = kill_chars, gexpr)
-  print(temp_corpus[[2]]$content)
+  temp_corpus <- tm_map(my_vcorpus_fr_6,FUN = kill_chars, gexpr)
+  ttt <- mapply(function(X,Y) {
+    # print("********")
+    print(paste(X$content,Y$content,sep=" "))
+    # print()
+    # print("--------")
+    
+  },
+  X= content(my_vcorpus_fr_7), 
+  Y= content(temp_corpus))
+  my_vcorpus_fr_7 <- VCorpus(VectorSource(ttt))
 }
 
+
+
+
+my_vcorpus_fr_7 <- tm_map(my_vcorpus_fr_7, stripWhitespace)
 ####
 
 
-dtm_vcorpus_fr2 <- DocumentTermMatrix(my_vcorpus_fr_5)
+dtm_vcorpus_fr2 <- DocumentTermMatrix(my_vcorpus_fr_7)
 
 dtm_vcorpus_fr_matrix2 <- (as.matrix(dtm_vcorpus_fr2))
 
