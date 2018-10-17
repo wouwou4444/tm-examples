@@ -1,8 +1,9 @@
-install.packages("corrplot")
-install.packages("tm")
+# install.packages("corrplot")
+# install.packages("tm")
 
 library(tm)
 library(corrplot)
+setwd(dir = "~/../OneDrive/Coursera2/R/")
 test_sentences <- readLines("./sentences.txt", encoding = "UTF-8")
 
 text_sample <- c("serveur_ADBCRD01,nom1-nom2-nom3. test de differents sep, EMf:listener_ORAADB01_dg_DG01_12654",
@@ -40,7 +41,7 @@ my_punct <- "[],()!\"*#$+:;<=>?~@^|{}\\[]"
 # my_vcorpus_fr_4 <- tm_map(my_vcorpus_fr_4,FUN = kill_chars, "(")
 # 
 
-my_vcorpus_fr_5 <- tm_map(my_vcorpus_fr_4,FUN = kill_chars, my_punct)
+my_vcorpus_fr_5 <- tm_map(my_vcorpus_fr_3,FUN = kill_chars, my_punct)
 my_punct_to_keep <- "[[:space:]][\\.\\-\\_]+"
 my_vcorpus_fr_5 <- tm_map(my_vcorpus_fr_5,FUN = kill_chars, my_punct_to_keep)
 my_punct_to_keep <- "[\\.\\-\\_]+[[:space:]]"
@@ -51,6 +52,21 @@ my_punct_to_keep <- "[\\.\\-\\_]+$"
 my_vcorpus_fr_5 <- tm_map(my_vcorpus_fr_5,FUN = kill_chars, my_punct_to_keep)
 
 my_vcorpus_fr_5 <- tm_map(my_vcorpus_fr_5, stripWhitespace)
+my_vcorpus_fr_6 <- my_vcorpus_fr_5[1:4]
+####
+separator <- c("_",".", "-")
+i <- 2**length(separator)
+for (j in 1:(i-1)) {
+  # print(j)
+  # print(separator[(intToBits(j) == 1)[1:3]])
+  gexpr <- paste("[",paste(separator[(intToBits(j) == 1)[1:length(separator)]], collapse = ""),"]",sep = "")
+  print(gexpr)
+  temp_corpus <- tm_map(my_vcorpus_fr_5,FUN = kill_chars, gexpr)
+  print(temp_corpus[[2]]$content)
+}
+
+####
+
 
 dtm_vcorpus_fr2 <- DocumentTermMatrix(my_vcorpus_fr_5)
 
@@ -59,8 +75,25 @@ dtm_vcorpus_fr_matrix2 <- (as.matrix(dtm_vcorpus_fr2))
 # inspect(dtm_vcorpus_fr2)
 
 mtd.norm <- as.matrix(removeSparseTerms(TermDocumentMatrix(my_vcorpus_fr_5),0.8))
+# mtd.norm <- as.matrix((TermDocumentMatrix(my_vcorpus_fr_5)))
 corrplot(mtd.norm, is.corr = FALSE)
 
-mtd.norm <- as.matrix(removeSparseTerms(TermDocumentMatrix(my_vcorpus_fr_5,
+mtd.norm2 <- as.matrix(removeSparseTerms(TermDocumentMatrix(my_vcorpus_fr_5,
                                          control=list(weighting=weightTfIdf)),0.8))
-corrplot(mtd.norm, is.corr = FALSE)
+# mtd.norm2 <- as.matrix((TermDocumentMatrix(my_vcorpus_fr_5,
+#                                                             control=list(weighting=weightTfIdf))))
+corrplot(mtd.norm2, is.corr = FALSE)
+
+## cosine similarity
+install.packages("lsa")
+library(lsa)
+my_cosine <- cosine(mtd.norm2)
+
+## Compute distance for Hierarchical clustering
+my_dist <- dist(dtm_vcorpus_fr_matrix2, method = "euclidean")
+my_dist
+my_hc <- hclust(my_dist, method = "ward.D2")
+plot(my_hc)
+
+my_hc2 <- hclust(my_dist, method = "complete")
+plot(my_hc2)
