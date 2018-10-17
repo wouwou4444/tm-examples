@@ -35,7 +35,7 @@ dtm_vcorpus_fr_matrix <- (as.matrix(dtm_vcorpus_fr))
 kill_chars <- content_transformer (function(x, pattern) gsub(pattern, " ", x))
 my_punct <- "[!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~]"
 my_punct <- "[!\"#$%&'()*+,/:;<=>?@\\[\\]^`\\{|\\}~\\]"
-my_punct <- "[],()!\"*#$+:;<=>?~@^|{}\\[/]"
+my_punct <- "[],()!\"*#$+:;<=>?~@^|{}\\[/']"
 
 # 
 
@@ -61,7 +61,7 @@ for (j in 1:(i-1)) {
   temp_corpus <- tm_map(my_vcorpus_fr_6,FUN = kill_chars, gexpr)
   ttt <- mapply(function(X,Y) {
     # print("********")
-    print(paste(X$content,Y$content,sep=" "))
+    # print(paste(X$content,Y$content,sep=" "))
     # print()
     # print("--------")
     
