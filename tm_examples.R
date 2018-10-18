@@ -55,13 +55,14 @@ my_vcorpus_fr_6 <- my_vcorpus_fr_5
 separator <- c("_",".", "-")
 i <- 2**length(separator)
 my_vcorpus_fr_7 <- VCorpus(VectorSource(character(length = length(my_vcorpus_fr_6))))
+
 for (j in 1:(i-1)) {
   gexpr <- paste("[",paste(separator[(intToBits(j) == 1)[1:length(separator)]], collapse = ""),"]",sep = "")
   print(gexpr)
   temp_corpus <- tm_map(my_vcorpus_fr_6,FUN = kill_chars, gexpr)
   ttt <- mapply(function(X,Y) {
     # print("********")
-    # print(paste(X$content,Y$content,sep=" "))
+    return(paste(X$content,Y$content,sep=" "))
     # print()
     # print("--------")
     
@@ -71,10 +72,9 @@ for (j in 1:(i-1)) {
   my_vcorpus_fr_7 <- VCorpus(VectorSource(ttt))
 }
 
-
-
-
 my_vcorpus_fr_7 <- tm_map(my_vcorpus_fr_7, stripWhitespace)
+
+
 ####
 
 
