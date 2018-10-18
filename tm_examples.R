@@ -4,6 +4,7 @@
 
 library(tm)
 library(corrplot)
+library(quanteda)
 setwd(dir = "~/../OneDrive/Coursera2/R/")
 test_sentences <- readLines("./sentences.txt", encoding = "UTF-8")
 
@@ -72,17 +73,23 @@ for (j in 1:(i-1)) {
   my_vcorpus_fr_7 <- VCorpus(VectorSource(ttt))
 }
 
+# my_vcorpus_fr_7 <- tm_map(my_vcorpus_fr_7, removeNumbers)
 my_vcorpus_fr_7 <- tm_map(my_vcorpus_fr_7, stripWhitespace)
 
 
+##############################################################################################
+##############################################################################################
 ####
 
 
 dtm_vcorpus_fr2 <- DocumentTermMatrix(my_vcorpus_fr_7)
-
 dtm_vcorpus_fr_matrix2 <- (as.matrix(dtm_vcorpus_fr2))
 
-# inspect(dtm_vcorpus_fr2)
+
+dtm_vcorpus_fr3 <- DocumentTermMatrix(
+  VCorpus(VectorSource(tokens(corpus(my_vcorpus_fr_7), 
+                              what = "fasterword", remove_numbers = TRUE))))
+dtm_vcorpus_fr_matrix3 <- (as.matrix(dtm_vcorpus_fr3))
 
 mtd.norm <- as.matrix(removeSparseTerms(TermDocumentMatrix(my_vcorpus_fr_5),0.8))
 # mtd.norm <- as.matrix((TermDocumentMatrix(my_vcorpus_fr_5)))
@@ -94,11 +101,15 @@ mtd.norm2 <- as.matrix(removeSparseTerms(TermDocumentMatrix(my_vcorpus_fr_5,
 #                                                             control=list(weighting=weightTfIdf))))
 corrplot(mtd.norm2, is.corr = FALSE)
 
+##############################################################################################
+##############################################################################################
 ## cosine similarity
 install.packages("lsa")
 library(lsa)
 my_cosine <- cosine(mtd.norm2)
 
+##############################################################################################
+##############################################################################################
 ## Compute distance for Hierarchical clustering
 my_dist <- dist(dtm_vcorpus_fr_matrix2, method = "euclidean")
 my_dist
