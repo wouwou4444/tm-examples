@@ -104,14 +104,20 @@ corrplot(mtd.norm2, is.corr = FALSE)
 ##############################################################################################
 ##############################################################################################
 ## cosine similarity
-install.packages("lsa")
+# install.packages("lsa")
 library(lsa)
 my_cosine <- cosine(mtd.norm2)
+my_cosine_dist <- as.dist(1 - my_cosine)
+
+
+my_hc_cosine <- hclust(my_cosine_dist, method = "ward.D2")
+plot(my_hc_cosine)
 
 ##############################################################################################
 ##############################################################################################
 ## Compute distance for Hierarchical clustering
 my_dist <- dist(dtm_vcorpus_fr_matrix2, method = "euclidean")
+
 my_dist
 my_hc <- hclust(my_dist, method = "ward.D2")
 plot(my_hc)
