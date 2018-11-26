@@ -1,6 +1,7 @@
 # install.packages("corrplot")
 # install.packages("tm")
 # install.packages("readtext")
+# install.packages("ape")
 
 library(tm)
 library(corrplot)
@@ -97,6 +98,10 @@ corrplot(mtd.norm, is.corr = FALSE)
 
 mtd.norm2 <- as.matrix(removeSparseTerms(TermDocumentMatrix(my_vcorpus_fr_5,
                                          control=list(weighting=weightTfIdf)),0.8))
+
+mtd.norm2 <- as.matrix((TermDocumentMatrix(my_vcorpus_fr_5,
+                                                            control=list(weighting=weightTfIdf))))
+
 # mtd.norm2 <- as.matrix((TermDocumentMatrix(my_vcorpus_fr_5,
 #                                                             control=list(weighting=weightTfIdf))))
 corrplot(mtd.norm2, is.corr = FALSE)
@@ -112,6 +117,11 @@ my_cosine_dist <- as.dist(1 - my_cosine)
 
 my_hc_cosine <- hclust(my_cosine_dist, method = "ward.D2")
 plot(my_hc_cosine)
+
+
+library(ape)
+plot(as.phylo(my_hc_cosine), type = "unrooted",
+     cex = 0.6, no.margin = TRUE)
 
 ##############################################################################################
 ##############################################################################################
